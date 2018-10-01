@@ -1,6 +1,9 @@
 # dictionary_creation_program
 作成中
 
+# 進捗
+ひとまずlex_predict.dictを出力できるように
+
 # 設計書
 前処理部分
 
