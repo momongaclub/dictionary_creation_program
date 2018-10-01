@@ -3,10 +3,12 @@ import re
 
 FILE_SEPARATER = '[\s/]'
 
+
 def parse():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('sample_train')
+    parser.add_argument('sample_test')
 
     args = parser.parse_args()
 
@@ -16,56 +18,16 @@ def parse():
 def load_input_file(fname):
 
     word_dict = {}
-    pos_list = []
 
     with open(fname, 'r') as fp:
         for line in fp:
             line = re.split(FILE_SEPARATER, line)
             for word, pos in zip(line[0::2], line[1::2]):
-                print('word', word, 'pos', pos)
-                word_dict[word] = pos
+                pos_list = word_dict.get(word, [])
+                pos_list.append(pos)
+                word_dict[word] = pos_list
+
     return word_dict
-
-
-def convert_text_to_dict(text, ope='r'):
-    u"""
-    text,opeは文字列を仮定する
-    """
-    with open(text, ope) as f:
-        letter, letters = '', ''
-        word, word_class = '', ''
-        word_dict = {}
-        flag = False
-        str = f.read()
-        for i in ('\n', ':', ';', '.', ',', "''", '(', ')'):
-            str = str.replace(i, '')
-        for letter in str:
-            if letter == '/' or letter == ' ':
-                if flag == False:
-                    word = letters
-                    flag = True
-                else:
-                    word_class = letters
-                    if word in word_dict:
-                        word_dict[word].append(word_class)
-                    else:
-                        word_dict[word] = [word_class]
-                    flag = False
-                    word, word_class = '', ''
-                letters=''
-            else:
-                letters += letter
-    return word_dict
-
-
-def convert_text_to_dict_split(text, ope='r'):
-
-    with open(text, ope) as f:
-        str = f.read()
-        str.replace('\n', '')
-        splitstring = str.split('/')
-    #print(splitstring)
-    return 0
 
 
 def max_element(word_list):
@@ -96,7 +58,7 @@ def equal_word_list(train_word_class, test_word_class):
         return False
 
 
-def guess_word(word_dict, word_list, test_dict):
+def guess_word(word_dict, test_dict, word_list):
     u"""
     word_dictはkeyが文字列,要素が文字列のlist,word_listは要素が全て文字列のlistを仮定
     word_list内全ての単語とその品詞を'単語/品詞'の形で出力する
@@ -104,23 +66,29 @@ def guess_word(word_dict, word_list, test_dict):
     cnt = 0
     for word in word_list:
         if word in word_dict:
-            #print(word + '/' + max_element(word_dict[word]), end = " ")
+            print(word + '/' + max_element(word_dict[word]), end = " ")
             if equal_word_list(max_element(word_dict[word]), max_element(test_dict[word])) == True:
                 cnt += 1
             #print(max_element(word_dict[word]), max_element(test_dict[word]))
         else:
             cnt += 1
-            #print(word + '/' + 'N', end=" ")
+            print(word + '/' + 'N', end=" ")
     return len(word_list)-cnt
+
+def define_pos(word_dict, test_dict, word_list):
+
+    for word in word_list:
+        pos_list = word_dict.get(word, ['None'])
+        print(word + '/' + max_element(pos_list)) # TODO max elements is not correct.
 
 
 def main():
     args = parse()
-    print(load_input_file(args.sample_train))
-    #train_dict = convert_text_to_dict('sample.train.txt', 'r')
-    #test_dict = convert_text_to_dict('sample.test.txt', 'r')
-    #a = convert_text_to_dict_split('sample.train.txt', 'r')
-    #print(train_dict)
-    #print(guess_word(train_dict, test_dict.keys(), test_dict))
+    train_dict = load_input_file(args.sample_train)
+    test_dict = load_input_file(args.sample_test)
+    dict_words_set = test_dict.keys()
+    define_pos(train_dict, test_dict, dict_words_set)
+    #print(guess_word(train_dict, test_dict, dict_words_set))
 
 main()
+
