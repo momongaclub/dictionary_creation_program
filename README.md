@@ -2,7 +2,8 @@
 作成中
 
 # 進捗
-ひとまずlex_predict.dictを出力できるように
+ひとまずlex_prob.dictを出力できるように〇
+bigram_prob.dictの出力
 
 # 設計書
 前処理部分
