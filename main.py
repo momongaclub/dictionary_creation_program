@@ -3,6 +3,8 @@ import re
 
 FILE_SEPARATER = '[\s/]'
 MIN_NUMBER = -1
+CONECT_W_AND_P = '/'
+TAB_SPACE = '\t'
 BRANK = ''
 
 
@@ -32,37 +34,56 @@ def load_input_file(fname):
     return word_dict
 
 
-def max_element(pos_list):
+def lex_prob(word, pos_list):
     u"""
-    word_listは要素が全て文字列のlistを仮定
-    word_list内の最も多い要素を返す
+    input: pos_list
+    output: lex
     """
     pos_set = set(pos_list)
-    max_NOO = MIN_NUMBER
-    max_pos = BRANK
+    lex = []
 
     for pos in pos_set:
-        NOO = pos_list.index(pos)# number of occurrences
-        if NOO > max_NOO:
-            max_NOO = NOO
-            max_pos = pos
-
-    return max_pos
+        lex.append(pos)
+        lex.append(pos_list.count(pos) / len(pos_list))
+    return lex
 
 
-def define_pos(word_dict, test_dict, word_list):
+def make_lex_dict(word_dict, test_dict, word_list):
+    
+    lex_list = []
 
     for word in word_list:
         pos_list = word_dict.get(word, ['None'])
-        print(word + '/' + max_element(pos_list)) # TODO max elements is not correct.
+        lp = lex_prob(word, pos_list)
+        for pos, prob in zip(lp[0::2], lp[1::2]):
+            lex = word + CONECT_W_AND_P + \
+            pos + TAB_SPACE + str(prob)
+            lex_list.append(lex)
+    
+    write_dict('lex_prob.dict', lex_list)
+
+def make_bigram_dict(word_dict, test_dict, word_list):
+
+    bigram_list = []
+
+
+
+    return 0
+
+
+def write_dict(fname, prob_list):
+
+    with open(fname, 'w') as fp:
+        fp.writelines('\n'.join(prob_list))
 
 
 def main():
     args = parse()
     train_dict = load_input_file(args.sample_train)
+    # ここでbigram_dictを作成しないと遷移がわからない
     test_dict = load_input_file(args.sample_test)
-    dict_words_set = test_dict.keys()
-    define_pos(train_dict, test_dict, dict_words_set)
+    dict_words_set = train_dict.keys()# before test
+    make_lex_dict(train_dict, test_dict, dict_words_set)
 
 main()
 
