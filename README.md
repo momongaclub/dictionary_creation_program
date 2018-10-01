@@ -1,1 +1,2 @@
-#dictionary_creation_program
+# dictionary_creation_program
+作成中
