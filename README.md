@@ -1,8 +1,9 @@
 # dictionary_creation_program
-作成中
+入力：英文品詞タグ付きコーパス
+出力：lex_prob_dict, bigram_prob_dict
 
 # 実行手順
-$ python corpus2dict.py corpus_data
+`$ python corpus2dict.py corpus_data`
 
 # コーパスの形式
 単語1/品詞1 単語2/品詞2 ... 単語n/品詞n
