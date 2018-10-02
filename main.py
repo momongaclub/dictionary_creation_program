@@ -2,7 +2,6 @@ import argparse
 import re
 
 FILE_SEPARATER = '[\s/]'
-MIN_NUMBER = -1
 CONECT_W_AND_P = '/'
 TAB_SPACE = '\t'
 BRANK = ''
@@ -11,15 +10,14 @@ BRANK = ''
 def parse():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('sample_train')
-    parser.add_argument('sample_test')
-
+    parser.add_argument('corpus', 
+                        help = 'English word corpus with part of speech tag')
     args = parser.parse_args()
 
     return args
 
 
-def load_input_file(fname):
+def corpus2dict(fname):
 
     word_dict = {}
 
@@ -34,41 +32,69 @@ def load_input_file(fname):
     return word_dict
 
 
-def lex_prob(word, pos_list):
+def calc_lex_prob(word, pos_list):
     u"""
     input: pos_list
     output: lex
     """
     pos_set = set(pos_list)
-    lex = []
+    lex_prob = []
 
     for pos in pos_set:
-        lex.append(pos)
-        lex.append(pos_list.count(pos) / len(pos_list))
-    return lex
+        lex_prob.append(pos)
+        lex_prob.append(pos_list.count(pos) / len(pos_list))
+
+    return lex_prob
 
 
-def make_lex_dict(word_dict, test_dict, word_list):
+def make_lex_dict(word_dict, word_list):
     
     lex_list = []
 
     for word in word_list:
         pos_list = word_dict.get(word, ['None'])
-        lp = lex_prob(word, pos_list)
+        lp = calc_lex_prob(word, pos_list)
         for pos, prob in zip(lp[0::2], lp[1::2]):
             lex = word + CONECT_W_AND_P + \
             pos + TAB_SPACE + str(prob)
+            
             lex_list.append(lex)
     
     write_dict('lex_prob.dict', lex_list)
 
-def make_bigram_dict(word_dict, test_dict, word_list):
+def calc_bigram_prob(bigram_dict):
 
+    num = 0
+
+    for value in bigram_dict.values():
+        num += value
+
+    for key, value in bigram_dict.items():
+        bigram_dict[key] = value / num
+
+    return bigram_dict
+
+
+def make_bigram_dict(fname):
+
+    bigram_dict = {}
     bigram_list = []
 
+    with open(fname, 'r') as fp:
+        for line in fp:
+            line = re.split(FILE_SEPARATER, line)
+            pos_list = line[1::2]
+            for b_pos, a_pos in zip(pos_list[0::], pos_list[1::]):
+                bigram = b_pos + '-' + a_pos
+                bigram_num = bigram_dict.get(bigram, 0)
+                bigram_dict[bigram] = bigram_num + 1
 
-
-    return 0
+        bigram_dict = calc_bigram_prob(bigram_dict)
+        for bigram, prob in bigram_dict.items():
+            bigram_list.append(bigram + TAB_SPACE + str(prob))
+        write_dict('bigram_prob.dict', bigram_list)
+    
+    return bigram_dict
 
 
 def write_dict(fname, prob_list):
@@ -79,11 +105,10 @@ def write_dict(fname, prob_list):
 
 def main():
     args = parse()
-    train_dict = load_input_file(args.sample_train)
-    # ここでbigram_dictを作成しないと遷移がわからない
-    test_dict = load_input_file(args.sample_test)
-    dict_words_set = train_dict.keys()# before test
-    make_lex_dict(train_dict, test_dict, dict_words_set)
+    english_dict = corpus2dict(args.corpus)
+    make_bigram_dict(args.corpus)
+    dict_words_set = english_dict.keys()
+    make_lex_dict(english_dict, dict_words_set)
 
 main()
 
