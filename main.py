@@ -10,8 +10,8 @@ BRANK = ''
 def parse():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('corpus', 
-                        help = 'English word corpus with part of speech tag')
+    parser.add_argument('corpus',
+                        help='English word corpus with part of speech tag')
     args = parser.parse_args()
 
     return args
@@ -48,7 +48,7 @@ def calc_lex_prob(word, pos_list):
 
 
 def make_lex_dict(word_dict, word_list):
-    
+ 
     lex_list = []
 
     for word in word_list:
@@ -56,11 +56,12 @@ def make_lex_dict(word_dict, word_list):
         lp = calc_lex_prob(word, pos_list)
         for pos, prob in zip(lp[0::2], lp[1::2]):
             lex = word + CONECT_W_AND_P + \
-            pos + TAB_SPACE + str(prob)
-            
+                    pos + TAB_SPACE + str(prob)
+
             lex_list.append(lex)
-    
+
     write_dict('lex_prob.dict', lex_list)
+
 
 def calc_bigram_prob(bigram_dict):
 
@@ -93,7 +94,7 @@ def make_bigram_dict(fname):
         for bigram, prob in bigram_dict.items():
             bigram_list.append(bigram + TAB_SPACE + str(prob))
         write_dict('bigram_prob.dict', bigram_list)
-    
+
     return bigram_dict
 
 
