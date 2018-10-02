@@ -2,7 +2,7 @@
 作成中
 
 # 実行手順
-$ python main.py corpus_data
+$ python corpus2dict.py corpus_data
 
 # コーパスの形式
 単語1/品詞1 単語2/品詞2 ... 単語n/品詞n
