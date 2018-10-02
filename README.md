@@ -1,5 +1,5 @@
 # dictionary_creation_program
-入力：英文品詞タグ付きコーパス
+入力：英文品詞タグ付きコーパス  
 出力：lex_prob_dict, bigram_prob_dict
 
 # 実行手順
