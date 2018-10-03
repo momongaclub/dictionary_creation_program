@@ -4,6 +4,7 @@ import re
 FILE_SEPARATER = '[\s/]'
 CONECT_W_AND_P = '/'
 TAB_SPACE = '\t'
+NEW_LINE = '\n'
 BRANK = ''
 
 
@@ -33,10 +34,7 @@ def corpus2dict(fname):
 
 
 def calc_lex_prob(word, pos_list):
-    u"""
-    input: pos_list
-    output: lex
-    """
+
     pos_set = set(pos_list)
     lex_prob = []
 
@@ -93,15 +91,14 @@ def make_bigram_dict(fname):
         bigram_dict = calc_bigram_prob(bigram_dict)
         for bigram, prob in bigram_dict.items():
             bigram_list.append(bigram + TAB_SPACE + str(prob))
-        write_dict('bigram_prob.dict', bigram_list)
 
-    return bigram_dict
+        write_dict('bigram_prob.dict', bigram_list)
 
 
 def write_dict(fname, prob_list):
 
     with open(fname, 'w') as fp:
-        fp.writelines('\n'.join(prob_list))
+        fp.writelines(NEW_LINE.join(prob_list))
 
 
 def main():
