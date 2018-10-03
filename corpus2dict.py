@@ -61,15 +61,14 @@ def make_lex_dict(word_dict, word_list):
     write_dict('lex_prob.dict', lex_list)
 
 
-def calc_bigram_prob(bigram_dict):
+def calc_bigram_prob(bigram_dict, pos_dict):
 
-    num = 0
-
-    for value in bigram_dict.values():
-        num += value
 
     for key, value in bigram_dict.items():
-        bigram_dict[key] = value / num
+        pos = re.split('-', key)
+        b_pos = pos[0]
+        pos_freq = pos_dict[b_pos]
+        bigram_dict[key] = value / pos_freq
 
     return bigram_dict
 
@@ -78,17 +77,26 @@ def make_bigram_dict(fname):
 
     bigram_dict = {}
     bigram_list = []
+    pos_dict = {}
 
     with open(fname, 'r') as fp:
+
         for line in fp:
             line = re.split(FILE_SEPARATER, line)
             pos_list = line[1::2]
+
+            for pos in pos_list:
+                pos_num = pos_dict.get(pos, 0)
+                pos_dict[pos] = pos_num + 1
+
             for b_pos, a_pos in zip(pos_list[0::], pos_list[1::]):
                 bigram = b_pos + '-' + a_pos
                 bigram_num = bigram_dict.get(bigram, 0)
                 bigram_dict[bigram] = bigram_num + 1
 
-        bigram_dict = calc_bigram_prob(bigram_dict)
+
+
+        bigram_dict = calc_bigram_prob(bigram_dict, pos_dict)
         for bigram, prob in bigram_dict.items():
             bigram_list.append(bigram + TAB_SPACE + str(prob))
 
