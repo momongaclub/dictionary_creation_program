@@ -3,7 +3,7 @@
 出力：lex_prob_dict, bigram_prob_dict
 
 # 実行手順
-`$ python corpus2dict.py corpus_data`
+`$ python corpus2dict.py corpus.data`
 
 # コーパスの形式
 単語1/品詞1 単語2/品詞2 ... 単語n/品詞n
