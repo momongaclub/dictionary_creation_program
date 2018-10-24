@@ -63,7 +63,6 @@ def make_lex_dict(word_dict, word_list):
 
 def calc_bigram_prob(bigram_dict, pos_dict):
 
-
     for key, value in bigram_dict.items():
         pos = re.split('-', key)
         b_pos = pos[0]
@@ -93,8 +92,6 @@ def make_bigram_dict(fname):
                 bigram = b_pos + '-' + a_pos
                 bigram_num = bigram_dict.get(bigram, 0)
                 bigram_dict[bigram] = bigram_num + 1
-
-
 
         bigram_dict = calc_bigram_prob(bigram_dict, pos_dict)
         for bigram, prob in bigram_dict.items():
